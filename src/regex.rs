@@ -17,7 +17,7 @@ struct Concat<'a> {
 }
 impl<'a> PartialEq for Concat<'a> {
     fn eq(&self, other: &Concat<'a>) -> bool {
-        false
+        self == other
     }
 }
 
@@ -26,8 +26,20 @@ struct Union<'a> {
     right: &'a mut Parser,
     _is_nullable: Option<bool>,
 }
+impl<'a> PartialEq for Union<'a> {
+    fn eq(&self, other: &Union<'a>) -> bool {
+        self == other
+    }
+}
+
+
 struct MemoizedDerivation<'a> {
     derivations: &'a HashMap<char, &'a mut Parser>,
+}
+impl<'a> PartialEq for MemoizedDerivation<'a> {
+    fn eq(&self, other: &MemoizedDerivation<'a>) -> bool {
+        self == other
+    }
 }
 
 trait Parser {
@@ -119,7 +131,11 @@ impl<'a> Parser for Union<'a> {
 
 impl<'a> Memoized for Union<'a> {
     fn inner_derive(&mut self, c: char) -> Box<Parser> {
-        self.left.derive(c)
+        if self.left == (Empty {}) {
+            self.left.derive(c)
+        } else {
+            self.right.derive(c)
+        }
     }
 }
 
