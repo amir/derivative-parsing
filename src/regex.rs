@@ -131,11 +131,7 @@ impl<'a> Parser for Union<'a> {
 
 impl<'a> Memoized for Union<'a> {
     fn inner_derive(&mut self, c: char) -> Box<Parser> {
-        if self.left == (Empty {}) {
-            self.left.derive(c)
-        } else {
-            self.right.derive(c)
-        }
+        self.left.derive(c)
     }
 }
 
